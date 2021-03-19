@@ -1,6 +1,7 @@
 import React, {FunctionComponent, useEffect, useState} from 'react'; // importing FunctionComponent
 import axios from "axios";
 import ForkUserDetails from "./ForkUserDetails";
+import GitApi from "../apis/git.api";
 
 type GitDetailsProps = {
     gitId: any;
@@ -19,11 +20,8 @@ const GitDetails: FunctionComponent<GitDetailsProps> = ({gitId}) => {
 
     useEffect(() => {
         const search = async () => {
-
-            const data: any = await axios.get(`https://api.github.com/gists/${gitId}`, {
-                params: {}
-            })
-            setSelectedGitData(data.data)
+            const {data} = await GitApi.get(`https://api.github.com/gists/${gitId}`)
+            setSelectedGitData(data)
         }
         search();
     }, [gitId])
@@ -33,16 +31,20 @@ const GitDetails: FunctionComponent<GitDetailsProps> = ({gitId}) => {
             setFile(fileData)
         }
     }, [selectedGitData])
-
+    const {forks} = selectedGitData
     return (<div className="uk-card uk-card-default uk-card-body">
         <h3 className="uk-card-title">{file.filename}</h3>
         <p>{selectedGitData.description}</p>
         <h4>Language: </h4>
         <p><span className="uk-badge">{file.language}</span></p>
-        <h4>Forks:</h4>
-        {selectedGitData?.forks?.slice(0, 3).map((forkUser: any) => {
-            return <ForkUserDetails user={forkUser.user}/>
-        })}
+        {forks?.length > 0 &&
+        <>
+          <h4>Forks:</h4>
+            {forks?.slice(0, 3).map((forkUser: any) => {
+                return <ForkUserDetails user={forkUser.user}/>
+            })}
+        </>
+        }
     </div>)
 }
 

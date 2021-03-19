@@ -1,5 +1,5 @@
 import React, {FunctionComponent, useEffect, useState} from 'react'; // importing FunctionComponent
-import axios from "axios";
+import GitApi from '../apis/git.api'
 
 type SearchBoxProps = {
     term: string;
@@ -10,18 +10,13 @@ type SearchBoxProps = {
 
 const SearchBox: FunctionComponent<SearchBoxProps> = ({term, results, setResults, setTerm}) => {
     const [value, setValue] = useState(term)
-    // const [results, setResults] = useState([])
     const search = async () => {
-        // /gists/public
-        let url = `https://api.github.com/gists/public`
-
+        let url = `/gists/public`
         if (value) {
-            url = `https://api.github.com/users/${value}/gists`
+            url = `/users/${value}/gists`
         }
-        const data: any = await axios.get(url, {
-            params: {}
-        })
-        setResults(data.data)
+        const {data} = await GitApi.get(url)
+        setResults(data)
     }
     useEffect(() => {
         search();
