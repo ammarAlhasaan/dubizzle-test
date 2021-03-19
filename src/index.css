@@ -1,0 +1,17 @@
+.GitItem {
+    display: flex;
+    justify-content: space-between;
+    color: #666;
+}
+
+.GitItem:hover {
+    color: #0f6ecd;
+}
+
+.SmallName {
+    display: inline-block;
+    width: 180px;
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+}
