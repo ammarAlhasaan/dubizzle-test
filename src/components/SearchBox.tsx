@@ -1,29 +1,29 @@
 import React, {FunctionComponent, useEffect, useState} from 'react'; // importing FunctionComponent
-import GitApi from '../apis/git.api'
+import {getGits} from "../redux/Git/git.actions";
+import {connect} from "react-redux";
 
 type SearchBoxProps = {
     term: string;
-    results: any[];
-    setResults: any;
-    setTerm: any
+    setTerm: any;
+    getGits?: any;
+    gits?: any
 }
 
-const SearchBox: FunctionComponent<SearchBoxProps> = ({term, results, setResults, setTerm}) => {
+const SearchBox: FunctionComponent<SearchBoxProps> = ({term,setTerm, getGits, gits}) => {
     const [value, setValue] = useState(term)
     const search = async () => {
         let url = `/gists/public`
         if (value) {
             url = `/users/${value}/gists`
         }
-        const {data} = await GitApi.get(url)
-        setResults(data)
+        getGits(url)
     }
     useEffect(() => {
         search();
     }, [])
 
     useEffect(() => {
-        if (term && !results.length) {
+        if (term && !gits.length) {
             search();
         } else {
             const timeoutId = setTimeout(() => {
@@ -58,5 +58,7 @@ const SearchBox: FunctionComponent<SearchBoxProps> = ({term, results, setResults
 
     </div>
 }
-
-export default SearchBox
+const mapStateToProps = (state: any) => {
+    return {...state.git}
+}
+export default connect(mapStateToProps, {getGits})(SearchBox)

@@ -26,12 +26,6 @@ const GitItem: FunctionComponent<GitItemProps> = ({item, setGitId}) => {
 
         </a>
     </li>)
-    // return <div key={item.id} className="uk-card uk-card-default uk-card-body uk-width-1-2@m">
-    //     <h3 className="uk-card-title">{file.filename}</h3>
-    //     {/*<p></p>*/}
-    //     <span className="uk-badge">{file.language}</span>
-    //
-    // </div>
 }
 
 export default GitItem

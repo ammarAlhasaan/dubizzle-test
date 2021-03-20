@@ -1,13 +1,16 @@
 import React, {FunctionComponent, useEffect, useState} from 'react'; // importing FunctionComponent
-import axios from "axios";
 import ForkUserDetails from "./ForkUserDetails";
-import GitApi from "../apis/git.api";
+import {connect} from "react-redux";
+import {selectGit} from "../redux/Git/git.actions";
 
 type GitDetailsProps = {
     gitId: any;
+    selectGit?: any;
+    selectedGit?: any
 }
 
-const GitDetails: FunctionComponent<GitDetailsProps> = ({gitId}) => {
+const GitDetails: FunctionComponent<GitDetailsProps> = ({gitId, selectGit, selectedGit}) => {
+
     const [file, setFile] = useState({
         filename: '',
         type: '',
@@ -15,26 +18,30 @@ const GitDetails: FunctionComponent<GitDetailsProps> = ({gitId}) => {
         raw_url: '',
         size: ''
     })
-    const init: any = {}
-    const [selectedGitData, setSelectedGitData] = useState(init)
+    useEffect(() => {
+        const getGit = async () => selectGit(gitId)
+        if (gitId)
+            getGit();
+    }, [gitId])
 
     useEffect(() => {
-        const search = async () => {
-            const {data} = await GitApi.get(`https://api.github.com/gists/${gitId}`)
-            setSelectedGitData(data)
-        }
-        search();
-    }, [gitId])
-    useEffect(() => {
-        if (selectedGitData?.files) {
-            const fileData: any = selectedGitData.files[Object.keys(selectedGitData.files)[0]]
+        if (selectedGit?.files) {
+            const fileData: any = selectedGit.files[Object.keys(selectedGit.files)[0]]
             setFile(fileData)
         }
-    }, [selectedGitData])
-    const {forks} = selectedGitData
+    }, [selectedGit])
+
+    const {forks} = selectedGit
+    if (!gitId) {
+        return (
+            <div className="uk-placeholder uk-text-center">
+                Select Item to See the Details
+            </div>
+        )
+    }
     return (<div className="uk-card uk-card-default uk-card-body">
         <h3 className="uk-card-title">{file.filename}</h3>
-        <p>{selectedGitData.description}</p>
+        <p>{selectedGit?.description}</p>
         <h4>Language: </h4>
         <p><span className="uk-badge">{file.language}</span></p>
         {forks?.length > 0 &&
@@ -48,4 +55,10 @@ const GitDetails: FunctionComponent<GitDetailsProps> = ({gitId}) => {
     </div>)
 }
 
-export default GitDetails
+
+const mapStateToProps = (state: any) => {
+    return {...state.git}
+}
+export default connect(mapStateToProps, {
+    selectGit
+})(GitDetails);
