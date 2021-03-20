@@ -1,5 +1,4 @@
-import React, {FunctionComponent, useEffect, useState} from 'react'; // importing FunctionComponent
-import axios from "axios";
+import React, {FunctionComponent, useEffect, useState} from 'react';
 import ForkUserDetails from "./ForkUserDetails";
 import GitApi from "../apis/git.api";
 
@@ -20,7 +19,7 @@ const GitDetails: FunctionComponent<GitDetailsProps> = ({gitId}) => {
 
     useEffect(() => {
         const search = async () => {
-            const {data} = await GitApi.get(`https://api.github.com/gists/${gitId}`)
+            const {data} = await GitApi.get(`/gists/${gitId}`)
             setSelectedGitData(data)
         }
         search();
